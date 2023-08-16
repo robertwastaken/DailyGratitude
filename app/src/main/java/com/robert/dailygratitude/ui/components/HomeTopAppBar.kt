@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.robert.dailygratitude.ui.theme.Typography
 
 @Composable
-fun HomeTopAppBar() {
+fun HomeTopAppBar(
+    showSnackbar: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,7 +37,7 @@ fun HomeTopAppBar() {
         )
 
         IconButton(
-            onClick = { println("print: clicked star") }
+            onClick = { showSnackbar("Clicked the star") }
         ) {
             Icon(
                 imageVector = Icons.Filled.Star,
@@ -44,7 +46,7 @@ fun HomeTopAppBar() {
         }
 
         IconButton(
-            onClick = { println("print: clicked add") }
+            onClick = { showSnackbar("Clicked add") }
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
@@ -59,5 +61,7 @@ fun HomeTopAppBar() {
 )
 @Composable
 fun HomeTopAppBarPreview() {
-    HomeTopAppBar()
+    HomeTopAppBar(
+        showSnackbar = {}
+    )
 }

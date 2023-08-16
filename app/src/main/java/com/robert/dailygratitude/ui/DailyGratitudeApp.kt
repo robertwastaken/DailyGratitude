@@ -3,11 +3,13 @@ package com.robert.dailygratitude.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ import com.robert.dailygratitude.navigation.DailyGratitudeNavHost
 import com.robert.dailygratitude.navigation.NAVIGATION_ENTRY_DETAILS
 import com.robert.dailygratitude.ui.components.BottomNavigationBar
 import com.robert.dailygratitude.ui.theme.DailyGratitudeTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +32,11 @@ fun DailyGratitudeApp() {
 
         bottomBarVisibility = navBackStackEntry?.destination?.route != NAVIGATION_ENTRY_DETAILS
 
+        val scaffoldState = rememberScaffoldState()
+        val scope = rememberCoroutineScope()
+
         Scaffold(
+            scaffoldState = scaffoldState,
             bottomBar = {
                 if (bottomBarVisibility) {
                     BottomNavigationBar(
@@ -44,7 +51,12 @@ fun DailyGratitudeApp() {
                     .padding(paddingValues)
             ) {
                 DailyGratitudeNavHost(
-                    navController = navController
+                    navController = navController,
+                    showSnackbar = { message ->
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(message)
+                        }
+                    }
                 )
             }
         }

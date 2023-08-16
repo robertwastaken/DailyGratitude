@@ -19,7 +19,8 @@ import com.robert.dailygratitude.ui.theme.Typography
 
 @Composable
 fun EntryDetailsTopAppBar(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    showSnackbar: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -43,7 +44,7 @@ fun EntryDetailsTopAppBar(
         )
 
         IconButton(
-            onClick = { println("print: clicked edit") }
+            onClick = { showSnackbar("Clicked edit") }
         ) {
             Icon(
                 imageVector = Icons.Filled.Edit,
@@ -52,7 +53,7 @@ fun EntryDetailsTopAppBar(
         }
 
         IconButton(
-            onClick = { println("print: clicked delete") }
+            onClick = { showSnackbar("Clicked delete") }
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
@@ -68,6 +69,7 @@ fun EntryDetailsTopAppBar(
 @Composable
 fun EntryDetailsTopAppBarPreview() {
     EntryDetailsTopAppBar(
-        onBack = {}
+        onBack = {},
+        showSnackbar = {}
     )
 }

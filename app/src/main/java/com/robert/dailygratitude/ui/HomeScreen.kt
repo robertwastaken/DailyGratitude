@@ -19,7 +19,8 @@ import com.robert.dailygratitude.ui.components.HomeTopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onClick: (Int) -> Unit
+    onCardClick: (Int) -> Unit,
+    showSnackbar: (String) -> Unit
 ) {
     val list = listOf(
         EntryCardModel(
@@ -58,7 +59,11 @@ fun HomeScreen(
     )
 
     Scaffold(
-        topBar = { HomeTopAppBar() }
+        topBar = {
+            HomeTopAppBar(
+                showSnackbar = { message -> showSnackbar(message) }
+            )
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -72,7 +77,7 @@ fun HomeScreen(
             itemsIndexed(list) { index, entry ->
                 EntryCard(
                     model = entry,
-                    onClick = { onClick(index) }
+                    onClick = { onCardClick(index) }
                 )
             }
         }

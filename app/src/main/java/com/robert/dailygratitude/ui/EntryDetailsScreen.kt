@@ -16,12 +16,14 @@ import com.robert.dailygratitude.ui.components.EntryDetailsTopAppBar
 @Composable
 fun EntryDetailsScreen(
     entryId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    showSnackbar: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
             EntryDetailsTopAppBar(
-                onBack = onBack
+                onBack = onBack,
+                showSnackbar = { message -> showSnackbar(message) }
             )
         }
     ) { paddingValues ->

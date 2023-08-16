@@ -14,7 +14,8 @@ const val NAVIGATION_SUPPORT_GROUPS = "supportgroups"
 
 @Composable
 fun DailyGratitudeNavHost(
-    navController: NavHostController
+    navController: NavHostController,
+    showSnackbar: (String) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -22,8 +23,11 @@ fun DailyGratitudeNavHost(
     ) {
         composable(route = NAVIGATION_DAILY_GRATITUDE) {
             HomeScreen(
-                onClick = { index ->
+                onCardClick = { index ->
                     navController.navigate("$NAVIGATION_DAILY_GRATITUDE/$index")
+                },
+                showSnackbar = { message ->
+                    showSnackbar(message)
                 }
             )
         }
@@ -31,7 +35,10 @@ fun DailyGratitudeNavHost(
         composable(route = NAVIGATION_ENTRY_DETAILS) { backStackEntry ->
             EntryDetailsScreen(
                 entryId = backStackEntry.arguments?.getString("entryId") ?: "",
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                showSnackbar = { message ->
+                    showSnackbar(message)
+                }
             )
         }
 
