@@ -22,7 +22,9 @@ fun DailyGratitudeNavHost(
     ) {
         composable(route = NAVIGATION_DAILY_GRATITUDE) {
             HomeScreen(
-                onClick = { navController.navigate("$NAVIGATION_DAILY_GRATITUDE/testId") }
+                onClick = { index ->
+                    navController.navigate("$NAVIGATION_DAILY_GRATITUDE/$index")
+                }
             )
         }
 
