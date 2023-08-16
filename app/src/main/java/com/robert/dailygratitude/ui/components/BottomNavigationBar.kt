@@ -1,4 +1,4 @@
-package com.robert.dailygratitude.ui
+package com.robert.dailygratitude.ui.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigationItem

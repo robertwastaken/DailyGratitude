@@ -28,7 +28,8 @@ fun DailyGratitudeNavHost(
 
         composable(route = NAVIGATION_ENTRY_DETAILS) { backStackEntry ->
             EntryDetailsScreen(
-                entryId = backStackEntry.arguments?.getString("entryId") ?: ""
+                entryId = backStackEntry.arguments?.getString("entryId") ?: "",
+                onBack = { navController.popBackStack() }
             )
         }
 

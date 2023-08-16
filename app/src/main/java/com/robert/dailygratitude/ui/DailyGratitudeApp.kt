@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.robert.dailygratitude.navigation.DailyGratitudeNavHost
 import com.robert.dailygratitude.navigation.NAVIGATION_ENTRY_DETAILS
+import com.robert.dailygratitude.ui.components.BottomNavigationBar
 import com.robert.dailygratitude.ui.theme.DailyGratitudeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
