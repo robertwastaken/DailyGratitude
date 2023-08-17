@@ -3,6 +3,7 @@ package com.robert.dailygratitude.ui.homescreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.robert.dailygratitude.data.DailyGratitudeRepository
+import com.robert.dailygratitude.di.InMemoryRepository
 import com.robert.dailygratitude.ui.components.EntryCardModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
+    @InMemoryRepository
     val dailyGratitudeRepository: DailyGratitudeRepository
 ) : ViewModel() {
 
@@ -34,7 +36,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<HomeScreenState>(HomeScreenState.Loading)
     val uiState: StateFlow<HomeScreenState> = _uiState.asStateFlow()
 
-    suspend fun loadEntries() {
+    private suspend fun loadEntries() {
         delay(1000)
 
         val entriesMap = mutableMapOf<String, List<EntryCardModel>>(
