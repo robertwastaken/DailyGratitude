@@ -44,21 +44,23 @@ class HomeScreenViewModel @Inject constructor(
         val entriesMap = mutableMapOf<String, List<EntryCardModel>>(
             THIS_WEEK to mutableListOf(), LAST_MONTH to mutableListOf(), OLDER to mutableListOf()
         )
-        val entriesList = dailyGratitudeRepository.getEntries()
-        entriesList.forEach {
-            if (it.date.after(Calendar.getInstance().apply { add(Calendar.DATE, -7) }.time)) {
-                entriesMap[THIS_WEEK] = entriesMap[THIS_WEEK]?.plus(it) ?: mutableListOf()
-            } else if (it.date.after(
-                    Calendar.getInstance().apply { add(Calendar.MONTH, -1) }.time
-                )
-            ) {
-                entriesMap[LAST_MONTH] = entriesMap[LAST_MONTH]?.plus(it) ?: mutableListOf()
-            } else {
-                entriesMap[OLDER] = entriesMap[OLDER]?.plus(it) ?: mutableListOf()
+        val entriesFlow = dailyGratitudeRepository.getEntries()
+        entriesFlow.collect { list ->
+            list.forEach {
+                if (it.date.after(Calendar.getInstance().apply { add(Calendar.DATE, -7) }.time)) {
+                    entriesMap[THIS_WEEK] = entriesMap[THIS_WEEK]?.plus(it) ?: mutableListOf()
+                } else if (it.date.after(
+                        Calendar.getInstance().apply { add(Calendar.MONTH, -1) }.time
+                    )
+                ) {
+                    entriesMap[LAST_MONTH] = entriesMap[LAST_MONTH]?.plus(it) ?: mutableListOf()
+                } else {
+                    entriesMap[OLDER] = entriesMap[OLDER]?.plus(it) ?: mutableListOf()
+                }
             }
+            _uiState.update { HomeScreenState.DataLoaded(entriesMap) }
         }
 
-        _uiState.update { HomeScreenState.DataLoaded(entriesMap) }
     }
 
 }

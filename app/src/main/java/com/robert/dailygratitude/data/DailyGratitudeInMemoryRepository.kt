@@ -2,6 +2,8 @@ package com.robert.dailygratitude.data
 
 import com.robert.dailygratitude.db.EntryCard
 import com.robert.dailygratitude.ui.components.EntryCardModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -43,7 +45,9 @@ class DailyGratitudeInMemoryRepository @Inject constructor() : DailyGratitudeRep
         )
     )
 
-    override fun getEntries(): List<EntryCardModel> = entries
+    private val entriesFlow = MutableStateFlow(entries)
+
+    override fun getEntries(): Flow<List<EntryCardModel>> = entriesFlow
 
     override fun insertAll(vararg entries: EntryCard) {}
 }
