@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.robert.dailygratitude.ui.EmptyScreen
 import com.robert.dailygratitude.ui.EntryDetailsScreen
-import com.robert.dailygratitude.ui.HomeScreen
+import com.robert.dailygratitude.ui.homescreen.HomeScreen
 
 const val NAVIGATION_DAILY_GRATITUDE = "dailygratitude"
 const val NAVIGATION_ENTRY_DETAILS = "$NAVIGATION_DAILY_GRATITUDE/{entryId}"
