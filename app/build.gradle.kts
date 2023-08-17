@@ -5,6 +5,15 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.47")
+    }
+}
+
 android {
     namespace = "com.robert.dailygratitude"
     compileSdk = 34
@@ -42,7 +51,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -69,11 +78,22 @@ dependencies {
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.47")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.47")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Room
+    implementation("androidx.room:room-runtime:2.5.2")
+    annotationProcessor("androidx.room:room-compiler:2.5.2")
+
+    kapt("androidx.room:room-compiler:2.5.2")
+
+    implementation("androidx.room:room-ktx:2.5.2")
+
+    // Kotlinx Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     testImplementation("junit:junit:4.13.2")
 

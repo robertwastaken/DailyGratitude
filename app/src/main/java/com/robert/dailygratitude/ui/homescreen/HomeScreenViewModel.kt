@@ -3,9 +3,10 @@ package com.robert.dailygratitude.ui.homescreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.robert.dailygratitude.data.DailyGratitudeRepository
-import com.robert.dailygratitude.di.InMemoryRepository
+import com.robert.dailygratitude.di.DatabaseRepository
 import com.robert.dailygratitude.ui.components.EntryCardModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    @InMemoryRepository
+//    @InMemoryRepository
+    @DatabaseRepository
     val dailyGratitudeRepository: DailyGratitudeRepository
 ) : ViewModel() {
 
@@ -28,7 +30,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loadEntries()
         }
     }

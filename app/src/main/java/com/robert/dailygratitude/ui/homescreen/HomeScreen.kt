@@ -52,63 +52,69 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Color.Gray,
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Bold,
-                            text = "This week"
-                        )
-                    }
-                    itemsIndexed(
-                        (uiState as HomeScreenState.DataLoaded).data[HomeScreenViewModel.THIS_WEEK]
-                            ?: emptyList()
-                    ) { index, entry ->
-                        EntryCard(
-                            model = entry,
-                            onClick = { onCardClick(index) }
-                        )
-                    }
+                    (uiState as HomeScreenState.DataLoaded).let { state ->
+                        if (state.data[HomeScreenViewModel.THIS_WEEK]?.isNotEmpty() == true) {
+                            item {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Start,
+                                    fontWeight = FontWeight.Bold,
+                                    text = "This week"
+                                )
+                            }
 
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Color.Gray,
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Bold,
-                            text = "Last month"
-                        )
-                    }
+                            itemsIndexed(
+                                state.data[HomeScreenViewModel.THIS_WEEK] ?: emptyList()
+                            ) { index, entry ->
+                                EntryCard(
+                                    model = entry,
+                                    onClick = { onCardClick(index) }
+                                )
+                            }
+                        }
 
-                    itemsIndexed(
-                        (uiState as HomeScreenState.DataLoaded).data[HomeScreenViewModel.LAST_MONTH]
-                            ?: emptyList()
-                    ) { index, entry ->
-                        EntryCard(
-                            model = entry,
-                            onClick = { onCardClick(index) }
-                        )
-                    }
+                        if (state.data[HomeScreenViewModel.LAST_MONTH]?.isNotEmpty() == true) {
+                            item {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Start,
+                                    fontWeight = FontWeight.Bold,
+                                    text = "Last month"
+                                )
+                            }
 
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Color.Gray,
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Bold,
-                            text = "Older"
-                        )
-                    }
+                            itemsIndexed(
+                                state.data[HomeScreenViewModel.LAST_MONTH] ?: emptyList()
+                            ) { index, entry ->
+                                EntryCard(
+                                    model = entry,
+                                    onClick = { onCardClick(index) }
+                                )
+                            }
+                        }
 
-                    itemsIndexed(
-                        (uiState as HomeScreenState.DataLoaded).data[HomeScreenViewModel.OLDER]
-                            ?: emptyList()
-                    ) { index, entry ->
-                        EntryCard(
-                            model = entry,
-                            onClick = { onCardClick(index) }
-                        )
+                        if (state.data[HomeScreenViewModel.OLDER]?.isNotEmpty() == true) {
+                            item {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Start,
+                                    fontWeight = FontWeight.Bold,
+                                    text = "Older"
+                                )
+                            }
+
+                            itemsIndexed(
+                                state.data[HomeScreenViewModel.OLDER] ?: emptyList()
+                            ) { index, entry ->
+                                EntryCard(
+                                    model = entry,
+                                    onClick = { onCardClick(index) }
+                                )
+                            }
+                        }
                     }
                 }
             }

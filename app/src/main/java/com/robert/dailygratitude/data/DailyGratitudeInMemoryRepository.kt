@@ -1,5 +1,6 @@
 package com.robert.dailygratitude.data
 
+import com.robert.dailygratitude.db.EntryCard
 import com.robert.dailygratitude.ui.components.EntryCardModel
 import java.util.Calendar
 import javax.inject.Inject
@@ -43,4 +44,6 @@ class DailyGratitudeInMemoryRepository @Inject constructor() : DailyGratitudeRep
     )
 
     override fun getEntries(): List<EntryCardModel> = entries
+
+    override fun insertAll(vararg entries: EntryCard) {}
 }
