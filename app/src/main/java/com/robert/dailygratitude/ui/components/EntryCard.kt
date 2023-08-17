@@ -23,6 +23,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.robert.dailygratitude.R
 import com.robert.dailygratitude.ui.theme.Typography
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -44,7 +48,7 @@ fun EntryCard(
         {
             Text(
                 style = Typography.bodySmall.copy(color = Color.Gray),
-                text = model.date
+                text = SimpleDateFormat("MMMM dd yyyy", Locale.US).format(model.date)
             )
 
             Text(
@@ -83,7 +87,7 @@ fun EntryCard(
 }
 
 data class EntryCardModel(
-    val date: String,
+    val date: Date,
     val description: String,
     val images: String? = null,
     val tags: List<String>? = null
@@ -93,7 +97,7 @@ data class EntryCardModel(
 @Composable
 fun EntryCardPreview() {
     val model = EntryCardModel(
-        date = "August 16 2023",
+        date = Calendar.getInstance().time,
         description = "This is the description of the thinggy",
         images = "images",
         tags = listOf("#one", "#two", "#three")
