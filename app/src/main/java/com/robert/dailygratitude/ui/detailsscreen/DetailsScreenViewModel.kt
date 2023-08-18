@@ -126,6 +126,8 @@ class DetailsScreenViewModel @Inject constructor(
                     tags = entry.tags
                 )
             )
+
+            // Reload data
             loadEntry()
         }
     }

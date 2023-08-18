@@ -46,6 +46,7 @@ fun EntryCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         )
         {
+            // Title
             Text(
                 style = Typography.bodySmall.copy(color = Color.Gray),
                 text = SimpleDateFormat("MMMM dd yyyy", Locale.US).format(model.date)
@@ -56,6 +57,7 @@ fun EntryCard(
                 text = model.description
             )
 
+            // Images
             model.image?.let {
                 AsyncImage(
                     modifier = Modifier.fillMaxWidth(),
@@ -66,6 +68,7 @@ fun EntryCard(
                 )
             }
 
+            // Tags
             model.tags?.let {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

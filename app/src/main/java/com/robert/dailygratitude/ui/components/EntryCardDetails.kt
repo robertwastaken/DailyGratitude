@@ -40,7 +40,6 @@ import java.util.Locale
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalLayoutApi::class,
-    ExperimentalFoundationApi::class
 )
 @Composable
 fun EntryCardDetails(
@@ -55,67 +54,20 @@ fun EntryCardDetails(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     )
     {
-        Text(
-            style = Typography.bodySmall.copy(color = Color.Gray),
-            text = SimpleDateFormat("MMMM dd yyyy", Locale.US).format(model.date)
+        // Title
+        DetailsTitle(
+            date = model.date,
+            description = model.description
         )
 
-        Text(
-            style = Typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            text = model.description
-        )
-
+        // Images
         model.images?.let {
-            if (model.images.size == 1) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxWidth(),
-                    model = model.images.first(),
-                    placeholder = painterResource(R.drawable.ic_launcher_background),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth
-                )
-            } else {
-                val pagerState = rememberPagerState(pageCount = { model.images.size })
-                val coroutineScope = rememberCoroutineScope()
-
-                HorizontalPager(
-                    modifier = Modifier.height(250.dp),
-                    state = pagerState,
-                    pageSpacing = 8.dp
-                ) { page ->
-                    AsyncImage(
-                        modifier = Modifier.fillMaxWidth(),
-                        model = model.images[page],
-                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    itemsIndexed(model.images) { index, image ->
-                        AsyncImage(
-                            modifier = Modifier
-                                .width(70.dp)
-                                .clickable {
-                                    coroutineScope.launch {
-                                        pagerState.scrollToPage(index)
-                                    }
-                                },
-                            model = image,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-            }
+            DetailsImages(
+                images = it
+            )
         }
 
+        // Tags
         model.tags?.let {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -130,6 +82,77 @@ fun EntryCardDetails(
                         }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailsTitle(
+    date: Date,
+    description: String
+) {
+    Text(
+        style = Typography.bodySmall.copy(color = Color.Gray),
+        text = SimpleDateFormat("MMMM dd yyyy", Locale.US).format(date)
+    )
+
+    Text(
+        style = Typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+        text = description
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DetailsImages(
+    images: List<String>
+) {
+    if (images.size == 1) {
+        AsyncImage(
+            modifier = Modifier.fillMaxWidth(),
+            model = images.first(),
+            placeholder = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth
+        )
+    } else {
+        val pagerState = rememberPagerState(pageCount = { images.size })
+        val coroutineScope = rememberCoroutineScope()
+
+        HorizontalPager(
+            modifier = Modifier.height(250.dp),
+            state = pagerState,
+            pageSpacing = 8.dp
+        ) { page ->
+            AsyncImage(
+                modifier = Modifier.fillMaxWidth(),
+                model = images[page],
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth
+            )
+        }
+
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            itemsIndexed(images) { index, image ->
+                AsyncImage(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .clickable {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(index)
+                            }
+                        },
+                    model = image,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
             }
         }
     }
