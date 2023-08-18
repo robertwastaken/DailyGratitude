@@ -20,6 +20,7 @@ import com.robert.dailygratitude.ui.theme.Typography
 @Composable
 fun EntryDetailsTopAppBar(
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     showSnackbar: (String) -> Unit
 ) {
     Row(
@@ -44,7 +45,7 @@ fun EntryDetailsTopAppBar(
         )
 
         IconButton(
-            onClick = { showSnackbar("Clicked edit") }
+            onClick = onEditClick
         ) {
             Icon(
                 imageVector = Icons.Filled.Edit,
@@ -70,6 +71,7 @@ fun EntryDetailsTopAppBar(
 fun EntryDetailsTopAppBarPreview() {
     EntryDetailsTopAppBar(
         onBack = {},
+        onEditClick = {},
         showSnackbar = {}
     )
 }

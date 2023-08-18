@@ -41,6 +41,10 @@ class DailyGratitudeDatabaseRepository @Inject constructor(
         )
     }
 
+    override fun updateEntry(entryCard: EntryCard) {
+        entriesDao.updateEntry(entryCard)
+    }
+
     override fun insertAll(vararg entries: EntryCard) {
         entriesDao.insertAll(*entries)
     }

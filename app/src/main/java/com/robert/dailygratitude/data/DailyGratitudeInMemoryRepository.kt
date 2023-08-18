@@ -5,6 +5,8 @@ import com.robert.dailygratitude.ui.components.EntryCardDetailsModel
 import com.robert.dailygratitude.ui.components.EntryCardModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import okhttp3.internal.toImmutableList
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -75,6 +77,27 @@ class DailyGratitudeInMemoryRepository @Inject constructor() : DailyGratitudeRep
             images = entry.images,
             tags = entry.tags
         )
+    }
+
+    override fun updateEntry(entryCard: EntryCard) {
+        val list = entries.toMutableList()
+        list.replaceAll {
+            if (it.id == entryCard.id)
+                entryCard
+            else
+                it
+        }
+        entriesFlow.update {
+            list.toImmutableList().map {
+                EntryCardModel(
+                    id = it.id,
+                    date = it.date,
+                    description = it.description,
+                    image = it.images?.firstOrNull(),
+                    tags = it.tags
+                )
+            }
+        }
     }
 
     override fun insertAll(vararg entries: EntryCard) {}

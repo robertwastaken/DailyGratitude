@@ -10,5 +10,7 @@ interface DailyGratitudeRepository {
 
     fun getEntry(entryId: Int): EntryCardDetailsModel
 
+    fun updateEntry(entryCard: EntryCard)
+
     fun insertAll(vararg entries: EntryCard)
 }

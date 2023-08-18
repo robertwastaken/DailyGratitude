@@ -41,11 +41,14 @@ class HomeScreenViewModel @Inject constructor(
     private suspend fun loadEntries() {
         delay(1000)
 
-        val entriesMap = mutableMapOf<String, List<EntryCardModel>>(
-            THIS_WEEK to mutableListOf(), LAST_MONTH to mutableListOf(), OLDER to mutableListOf()
-        )
         val entriesFlow = dailyGratitudeRepository.getEntries()
         entriesFlow.collect { list ->
+            val entriesMap = mutableMapOf<String, List<EntryCardModel>>(
+                THIS_WEEK to mutableListOf(),
+                LAST_MONTH to mutableListOf(),
+                OLDER to mutableListOf()
+            )
+
             list.forEach {
                 if (it.date.after(Calendar.getInstance().apply { add(Calendar.DATE, -7) }.time)) {
                     entriesMap[THIS_WEEK] = entriesMap[THIS_WEEK]?.plus(it) ?: mutableListOf()

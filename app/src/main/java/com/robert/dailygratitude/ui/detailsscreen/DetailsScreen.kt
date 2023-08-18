@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.robert.dailygratitude.ui.components.EntryCardDetails
+import com.robert.dailygratitude.ui.components.EntryCardDetailsEditing
 import com.robert.dailygratitude.ui.components.EntryDetailsTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,18 +29,12 @@ fun DetailsScreen(
         topBar = {
             EntryDetailsTopAppBar(
                 onBack = onBack,
+                onEditClick = { viewModel.startEditing() },
                 showSnackbar = { message -> showSnackbar(message) }
             )
         }
     ) { paddingValues ->
         when (uiState) {
-            is DetailsScreenState.DataLoaded -> {
-                EntryCardDetails(
-                    modifier = Modifier.padding(paddingValues),
-                    model = (uiState as DetailsScreenState.DataLoaded).entry
-                )
-            }
-
             DetailsScreenState.Loading -> {
                 Box(
                     modifier = Modifier
@@ -49,6 +44,27 @@ fun DetailsScreen(
                 ) {
                     CircularProgressIndicator()
                 }
+            }
+
+            is DetailsScreenState.DataLoaded -> {
+                EntryCardDetails(
+                    modifier = Modifier.padding(paddingValues),
+                    model = (uiState as DetailsScreenState.DataLoaded).entry
+                )
+            }
+
+            is DetailsScreenState.EditingData -> {
+                EntryCardDetailsEditing(
+                    modifier = Modifier.padding(paddingValues),
+                    description = viewModel.description,
+                    updateDescription = { input -> viewModel.updateDescription(input) },
+                    model = (uiState as DetailsScreenState.EditingData).entry,
+                    addTag = { newTag -> viewModel.addTag(newTag) },
+                    newTag = viewModel.newTag,
+                    updateNewTag = { input -> viewModel.updateNewTag(input) },
+                    removeTag = { index -> viewModel.removeTag(index) },
+                    onSaveClick = { viewModel.onSaveClick() }
+                )
             }
         }
     }
