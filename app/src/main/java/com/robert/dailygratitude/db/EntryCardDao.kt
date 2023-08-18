@@ -10,6 +10,9 @@ interface EntryCardDao {
     @Query("SELECT * FROM entries")
     fun getAll(): Flow<List<EntryCard>>
 
+    @Query("SELECT * FROM entries WHERE id = :entryId")
+    fun getEntry(entryId: Int): EntryCard
+
     @Insert
     fun insertAll(vararg entries: EntryCard)
 }

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -64,12 +64,12 @@ fun HomeScreen(
                                 )
                             }
 
-                            itemsIndexed(
+                            items(
                                 state.data[HomeScreenViewModel.THIS_WEEK] ?: emptyList()
-                            ) { index, entry ->
+                            ) { entry ->
                                 EntryCard(
                                     model = entry,
-                                    onClick = { onCardClick(index) }
+                                    onClick = { onCardClick(entry.id) }
                                 )
                             }
                         }
@@ -85,12 +85,12 @@ fun HomeScreen(
                                 )
                             }
 
-                            itemsIndexed(
+                            items(
                                 state.data[HomeScreenViewModel.LAST_MONTH] ?: emptyList()
-                            ) { index, entry ->
+                            ) { entry ->
                                 EntryCard(
                                     model = entry,
-                                    onClick = { onCardClick(index) }
+                                    onClick = { onCardClick(entry.id) }
                                 )
                             }
                         }
@@ -106,12 +106,12 @@ fun HomeScreen(
                                 )
                             }
 
-                            itemsIndexed(
+                            items(
                                 state.data[HomeScreenViewModel.OLDER] ?: emptyList()
-                            ) { index, entry ->
+                            ) { entry ->
                                 EntryCard(
                                     model = entry,
-                                    onClick = { onCardClick(index) }
+                                    onClick = { onCardClick(entry.id) }
                                 )
                             }
                         }

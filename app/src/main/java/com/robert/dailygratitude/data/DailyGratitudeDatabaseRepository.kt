@@ -2,6 +2,7 @@ package com.robert.dailygratitude.data
 
 import com.robert.dailygratitude.db.EntryCard
 import com.robert.dailygratitude.db.EntryCardDao
+import com.robert.dailygratitude.ui.components.EntryCardDetailsModel
 import com.robert.dailygratitude.ui.components.EntryCardModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,13 +17,28 @@ class DailyGratitudeDatabaseRepository @Inject constructor(
         return entries.map { list ->
             list.map {
                 EntryCardModel(
+                    id = it.id,
                     date = it.date,
                     description = it.description,
-                    images = it.images?.firstOrNull(),
+                    image = it.images?.firstOrNull(),
                     tags = it.tags
                 )
             }
         }
+    }
+
+    override fun getEntry(entryId: Int): EntryCardDetailsModel {
+        val entry = entriesDao.getEntry(entryId)
+        return EntryCardDetailsModel(
+            id = entry.id,
+            date = entry.date,
+            description = entry.description,
+            images = if (entry.images?.isEmpty() == true)
+                null
+            else
+                entry.images,
+            tags = entry.tags
+        )
     }
 
     override fun insertAll(vararg entries: EntryCard) {

@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.robert.dailygratitude.ui.EmptyScreen
-import com.robert.dailygratitude.ui.EntryDetailsScreen
+import com.robert.dailygratitude.ui.detailsscreen.DetailsScreen
 import com.robert.dailygratitude.ui.homescreen.HomeScreen
 
 const val NAVIGATION_DAILY_GRATITUDE = "dailygratitude"
@@ -33,8 +33,7 @@ fun DailyGratitudeNavHost(
         }
 
         composable(route = NAVIGATION_ENTRY_DETAILS) { backStackEntry ->
-            EntryDetailsScreen(
-                entryId = backStackEntry.arguments?.getString("entryId") ?: "",
+            DetailsScreen(
                 onBack = { navController.popBackStack() },
                 showSnackbar = { message ->
                     showSnackbar(message)

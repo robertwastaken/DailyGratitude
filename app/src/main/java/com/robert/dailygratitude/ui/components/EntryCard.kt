@@ -56,7 +56,7 @@ fun EntryCard(
                 text = model.description
             )
 
-            model.images?.let {
+            model.image?.let {
                 AsyncImage(
                     modifier = Modifier.fillMaxWidth(),
                     model = "https://picsum.photos/300/200",
@@ -87,9 +87,10 @@ fun EntryCard(
 }
 
 data class EntryCardModel(
+    val id: Int,
     val date: Date,
     val description: String,
-    val images: String? = null,
+    val image: String? = null,
     val tags: List<String>? = null
 )
 
@@ -97,9 +98,10 @@ data class EntryCardModel(
 @Composable
 fun EntryCardPreview() {
     val model = EntryCardModel(
+        id = 0,
         date = Calendar.getInstance().time,
         description = "This is the description of the thinggy",
-        images = "images",
+        image = "images",
         tags = listOf("#one", "#two", "#three")
     )
     EntryCard(
