@@ -31,11 +31,16 @@ class DetailsScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            loadEntry()
+            if (isNewEntry) {
+                addNewEntry()
+            } else {
+                loadEntry()
+            }
         }
     }
 
     private val entryId: String = checkNotNull(savedStateHandle["entryId"])
+    private val isNewEntry: Boolean = checkNotNull(savedStateHandle["newEntry"])
 
     private val _uiState = MutableStateFlow<DetailsScreenState>(DetailsScreenState.Loading)
     val uiState: StateFlow<DetailsScreenState> = _uiState.asStateFlow()
@@ -70,6 +75,41 @@ class DetailsScreenViewModel @Inject constructor(
         }
     }
 
+    private fun addNewEntry() {
+        _uiState.update {
+            DetailsScreenState.EditingData(
+                isAddingNewEntry = true,
+                entry = EntryCardDetailsModel(
+                    id = 0,
+                    date = Calendar.getInstance().time,
+                    description = "",
+                    images = emptyList(),
+                    tags = emptyList()
+                )
+            )
+        }
+    }
+
+    fun onAddClick(
+        onFinishCallBack: () -> Unit
+    ) {
+        val entry = (_uiState.value as DetailsScreenState.EditingData).entry
+
+        viewModelScope.launch(Dispatchers.IO) {
+            dailyGratitudeRepository.insertAll(
+                EntryCard(
+                    id = entry.id,
+                    date = entry.date,
+                    description = description,
+                    images = entry.images,
+                    tags = entry.tags
+                )
+            )
+        }
+        // Navigate Back
+        onFinishCallBack()
+    }
+
     fun startEditing() {
         if (_uiState.value !is DetailsScreenState.DataLoaded) {
             return
@@ -78,7 +118,8 @@ class DetailsScreenViewModel @Inject constructor(
         _uiState.update {
             description = (it as DetailsScreenState.DataLoaded).entry.description
             DetailsScreenState.EditingData(
-                it.entry.copy(date = Calendar.getInstance().time)
+                isAddingNewEntry = false,
+                entry = it.entry.copy(date = Calendar.getInstance().time)
             )
         }
     }
@@ -141,6 +182,7 @@ sealed class DetailsScreenState {
     ) : DetailsScreenState()
 
     data class EditingData(
+        val isAddingNewEntry: Boolean,
         val entry: EntryCardDetailsModel
     ) : DetailsScreenState()
 }

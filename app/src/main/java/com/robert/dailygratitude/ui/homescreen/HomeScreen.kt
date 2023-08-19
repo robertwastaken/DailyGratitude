@@ -30,6 +30,7 @@ import com.robert.dailygratitude.ui.components.HomeTopAppBar
 fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     onCardClick: (Int) -> Unit,
+    onAddClick: () -> Unit,
     showSnackbar: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -37,6 +38,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             HomeTopAppBar(
+                onAddClick = onAddClick,
                 showSnackbar = { message -> showSnackbar(message) }
             )
         }

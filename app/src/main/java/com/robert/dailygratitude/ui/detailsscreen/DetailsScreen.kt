@@ -56,6 +56,7 @@ fun DetailsScreen(
             is DetailsScreenState.EditingData -> {
                 EntryCardDetailsEditing(
                     modifier = Modifier.padding(paddingValues),
+                    isAddingNewEntry = (uiState as DetailsScreenState.EditingData).isAddingNewEntry,
                     description = viewModel.description,
                     updateDescription = { input -> viewModel.updateDescription(input) },
                     model = (uiState as DetailsScreenState.EditingData).entry,
@@ -63,7 +64,12 @@ fun DetailsScreen(
                     newTag = viewModel.newTag,
                     updateNewTag = { input -> viewModel.updateNewTag(input) },
                     removeTag = { index -> viewModel.removeTag(index) },
-                    onSaveClick = { viewModel.onSaveClick() }
+                    onSaveClick = { viewModel.onSaveClick() },
+                    onAddClick = {
+                        viewModel.onAddClick(
+                            onFinishCallBack = onBack
+                        )
+                    }
                 )
             }
         }

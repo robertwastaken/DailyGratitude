@@ -19,6 +19,7 @@ import com.robert.dailygratitude.ui.theme.Typography
 
 @Composable
 fun HomeTopAppBar(
+    onAddClick: () -> Unit,
     showSnackbar: (String) -> Unit
 ) {
     Row(
@@ -46,7 +47,7 @@ fun HomeTopAppBar(
         }
 
         IconButton(
-            onClick = { showSnackbar("Clicked add") }
+            onClick = onAddClick
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
@@ -62,6 +63,7 @@ fun HomeTopAppBar(
 @Composable
 fun HomeTopAppBarPreview() {
     HomeTopAppBar(
+        onAddClick = {},
         showSnackbar = {}
     )
 }

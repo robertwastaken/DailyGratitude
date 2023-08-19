@@ -49,6 +49,7 @@ import java.util.Locale
 @Composable
 fun EntryCardDetailsEditing(
     modifier: Modifier = Modifier,
+    isAddingNewEntry: Boolean = true,
     model: EntryCardDetailsModel,
     description: String,
     updateDescription: (String) -> Unit,
@@ -56,7 +57,8 @@ fun EntryCardDetailsEditing(
     newTag: String,
     updateNewTag: (String) -> Unit,
     removeTag: (Int) -> Unit,
-    onSaveClick: () -> Unit
+    onSaveClick: (() -> Unit),
+    onAddClick: (() -> Unit)
 ) {
     LazyColumn(
         modifier = modifier
@@ -96,10 +98,16 @@ fun EntryCardDetailsEditing(
                 contentAlignment = Alignment.Center
             ) {
                 Button(
-                    onClick = onSaveClick
+                    onClick = if (isAddingNewEntry)
+                        onAddClick
+                    else
+                        onSaveClick
                 ) {
                     Text(
-                        text = "Save"
+                        text = if (isAddingNewEntry)
+                            "Add"
+                        else
+                            "Save"
                     )
                 }
             }
@@ -164,7 +172,7 @@ fun DetailsEditingImages(
             contentDescription = null,
             contentScale = ContentScale.FillWidth
         )
-    } else {
+    } else if (images.size > 1) {
         val pagerState = rememberPagerState(pageCount = { images.size })
         val coroutineScope = rememberCoroutineScope()
 
@@ -297,4 +305,28 @@ fun DetailsEditingTagsPreview() {
             removeTag = {}
         )
     }
+}
+
+@Preview(
+    showBackground = true
+)
+@Composable
+fun EntryCardDetailsEditingPreview() {
+    EntryCardDetailsEditing(
+        model = EntryCardDetailsModel(
+            id = 0,
+            date = Calendar.getInstance().time,
+            description = "",
+            images = listOf("image", "another image"),
+            tags = listOf("one", "two", "three")
+        ),
+        description = "This is the description",
+        updateDescription = {},
+        addTag = {},
+        newTag = "",
+        updateNewTag = {},
+        removeTag = {},
+        onAddClick = {},
+        onSaveClick = {}
+    )
 }
