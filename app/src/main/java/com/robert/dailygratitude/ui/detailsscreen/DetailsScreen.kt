@@ -30,7 +30,12 @@ fun DetailsScreen(
             EntryDetailsTopAppBar(
                 onBack = onBack,
                 onEditClick = { viewModel.startEditing() },
-                showSnackbar = { message -> showSnackbar(message) }
+                onDeleteClick = {
+                    viewModel.onDeleteClick(
+                        onFinishCallback = onBack,
+                        showSnackbar = { message -> showSnackbar(message) }
+                    )
+                }
             )
         }
     ) { paddingValues ->

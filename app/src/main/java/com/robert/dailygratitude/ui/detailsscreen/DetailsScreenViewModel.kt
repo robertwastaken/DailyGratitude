@@ -106,7 +106,7 @@ class DetailsScreenViewModel @Inject constructor(
                 )
             )
         }
-        // Navigate Back
+        // Navigate back
         onFinishCallBack()
     }
 
@@ -171,6 +171,33 @@ class DetailsScreenViewModel @Inject constructor(
             // Reload data
             loadEntry()
         }
+    }
+
+    fun onDeleteClick(
+        onFinishCallback: () -> Unit,
+        showSnackbar: (String) -> Unit
+    ) {
+        if (_uiState.value !is DetailsScreenState.DataLoaded) {
+            showSnackbar("Can't delete while editing")
+            return
+        }
+
+        val entry = (_uiState.value as DetailsScreenState.DataLoaded).entry
+
+        viewModelScope.launch(Dispatchers.IO) {
+            dailyGratitudeRepository.delete(
+                entryCard = EntryCard(
+                    id = entry.id,
+                    date = entry.date,
+                    description = description,
+                    images = entry.images,
+                    tags = entry.tags
+                )
+            )
+        }
+
+        // Navigate back
+        onFinishCallback()
     }
 }
 

@@ -21,7 +21,7 @@ import com.robert.dailygratitude.ui.theme.Typography
 fun EntryDetailsTopAppBar(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
-    showSnackbar: (String) -> Unit
+    onDeleteClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -54,7 +54,7 @@ fun EntryDetailsTopAppBar(
         }
 
         IconButton(
-            onClick = { showSnackbar("Clicked delete") }
+            onClick = onDeleteClick
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
@@ -72,6 +72,6 @@ fun EntryDetailsTopAppBarPreview() {
     EntryDetailsTopAppBar(
         onBack = {},
         onEditClick = {},
-        showSnackbar = {}
+        onDeleteClick = {}
     )
 }

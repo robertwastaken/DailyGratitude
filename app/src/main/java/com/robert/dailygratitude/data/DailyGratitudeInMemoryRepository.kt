@@ -100,5 +100,21 @@ class DailyGratitudeInMemoryRepository @Inject constructor() : DailyGratitudeRep
         }
     }
 
+    override fun delete(entryCard: EntryCard) {
+        val list = entries.toMutableList()
+        list.remove(entryCard)
+        entriesFlow.update {
+            list.toImmutableList().map {
+                EntryCardModel(
+                    id = it.id,
+                    date = it.date,
+                    description = it.description,
+                    image = it.images?.firstOrNull(),
+                    tags = it.tags
+                )
+            }
+        }
+    }
+
     override fun insertAll(vararg entries: EntryCard) {}
 }

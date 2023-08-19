@@ -46,9 +46,7 @@ fun DailyGratitudeNavHost(
         ) { backStackEntry ->
             DetailsScreen(
                 onBack = { navController.popBackStack() },
-                showSnackbar = { message ->
-                    showSnackbar(message)
-                }
+                showSnackbar = { message -> showSnackbar(message) }
             )
         }
 

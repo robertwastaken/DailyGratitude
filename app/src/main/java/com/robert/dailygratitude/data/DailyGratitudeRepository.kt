@@ -13,4 +13,6 @@ interface DailyGratitudeRepository {
     fun updateEntry(entryCard: EntryCard)
 
     fun insertAll(vararg entries: EntryCard)
+
+    fun delete(entryCard: EntryCard)
 }
