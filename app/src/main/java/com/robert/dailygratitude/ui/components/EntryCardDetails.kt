@@ -1,5 +1,6 @@
 package com.robert.dailygratitude.ui.components
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.robert.dailygratitude.R
 import com.robert.dailygratitude.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -110,8 +113,12 @@ fun DetailsImages(
 ) {
     if (images.size == 1) {
         AsyncImage(
-            modifier = Modifier.fillMaxWidth(),
-            model = images.first(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(Uri.parse(images.first()))
+                .build(),
             placeholder = painterResource(R.drawable.ic_launcher_background),
             contentDescription = null,
             contentScale = ContentScale.FillWidth
@@ -127,7 +134,9 @@ fun DetailsImages(
         ) { page ->
             AsyncImage(
                 modifier = Modifier.fillMaxWidth(),
-                model = images[page],
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(Uri.parse(images[page]))
+                    .build(),
                 placeholder = painterResource(R.drawable.ic_launcher_background),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
@@ -137,6 +146,7 @@ fun DetailsImages(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 8.dp)
                 .height(50.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -149,7 +159,9 @@ fun DetailsImages(
                                 pagerState.scrollToPage(index)
                             }
                         },
-                    model = image,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(Uri.parse(image))
+                        .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )

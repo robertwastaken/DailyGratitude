@@ -1,5 +1,6 @@
 package com.robert.dailygratitude.ui.detailsscreen
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,6 +30,9 @@ class DetailsScreenViewModel @Inject constructor(
     val dailyGratitudeRepository: DailyGratitudeRepository
 ) : ViewModel() {
 
+    private val entryId: String = checkNotNull(savedStateHandle["entryId"])
+    private val isNewEntry: Boolean = checkNotNull(savedStateHandle["newEntry"])
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             if (isNewEntry) {
@@ -38,9 +42,6 @@ class DetailsScreenViewModel @Inject constructor(
             }
         }
     }
-
-    private val entryId: String = checkNotNull(savedStateHandle["entryId"])
-    private val isNewEntry: Boolean = checkNotNull(savedStateHandle["newEntry"])
 
     private val _uiState = MutableStateFlow<DetailsScreenState>(DetailsScreenState.Loading)
     val uiState: StateFlow<DetailsScreenState> = _uiState.asStateFlow()
@@ -149,6 +150,20 @@ class DetailsScreenViewModel @Inject constructor(
             (it as DetailsScreenState.EditingData).copy(
                 entry = entry.copy(
                     tags = tags
+                )
+            )
+        }
+    }
+
+    fun addImage(imageUri: Uri) {
+        val entry = (_uiState.value as DetailsScreenState.EditingData).entry
+
+        _uiState.update {
+            (it as DetailsScreenState.EditingData).copy(
+                entry = entry.copy(
+                    images = entry.images?.plus(
+                        listOf(imageUri.toString())
+                    )
                 )
             )
         }

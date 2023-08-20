@@ -74,7 +74,8 @@ fun DetailsScreen(
                         viewModel.onAddClick(
                             onFinishCallBack = onBack
                         )
-                    }
+                    },
+                    addImage = { imageUri -> viewModel.addImage(imageUri) }
                 )
             }
         }

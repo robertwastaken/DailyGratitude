@@ -1,6 +1,13 @@
 package com.robert.dailygratitude.ui.components
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,25 +18,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.robert.dailygratitude.R
 import com.robert.dailygratitude.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -56,6 +69,7 @@ fun EntryCardDetailsEditing(
     addTag: (String) -> Unit,
     newTag: String,
     updateNewTag: (String) -> Unit,
+    addImage: (Uri) -> Unit,
     removeTag: (Int) -> Unit,
     onSaveClick: (() -> Unit),
     onAddClick: (() -> Unit)
@@ -77,11 +91,10 @@ fun EntryCardDetailsEditing(
             )
 
             // Images
-            model.images?.let {
-                DetailsEditingImages(
-                    images = it
-                )
-            }
+            DetailsEditingImages(
+                images = model.images,
+                addImage = { imageUri -> addImage(imageUri) }
+            )
 
             // Tags
             DetailsEditingTags(
@@ -162,40 +175,71 @@ fun DetailsEditingTitle(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailsEditingImages(
-    images: List<String>
+    images: List<String>?,
+    addImage: (Uri) -> Unit
 ) {
-    if (images.size == 1) {
-        AsyncImage(
-            modifier = Modifier.fillMaxWidth(),
-            model = images.first(),
-            placeholder = painterResource(R.drawable.ic_launcher_background),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
-    } else if (images.size > 1) {
+    images?.let {
         val pagerState = rememberPagerState(pageCount = { images.size })
         val coroutineScope = rememberCoroutineScope()
 
-        HorizontalPager(
-            modifier = Modifier.height(250.dp),
-            state = pagerState,
-            pageSpacing = 8.dp
-        ) { page ->
+        val context = LocalContext.current
+
+        val pickMedia =
+            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    // Persist media file access
+                    val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    context.contentResolver.takePersistableUriPermission(uri, flag)
+
+                    addImage(uri)
+                }
+            }
+
+        if (images.size == 1) {
             AsyncImage(
-                modifier = Modifier.fillMaxWidth(),
-                model = images[page],
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(Uri.parse(images.first()))
+                    .build(),
                 placeholder = painterResource(R.drawable.ic_launcher_background),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
+        } else if (images.size > 1) {
+
+
+            HorizontalPager(
+                modifier = Modifier.height(250.dp),
+                state = pagerState,
+                pageSpacing = 8.dp
+            ) { page ->
+                AsyncImage(
+                    modifier = Modifier.fillMaxWidth(),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(Uri.parse(images[page]))
+                        .build(),
+                    placeholder = painterResource(R.drawable.ic_launcher_background),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth
+                )
+            }
         }
 
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 8.dp)
                 .height(50.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item {
+                AddPhotoCard(
+                    pickMedia = pickMedia
+                )
+            }
+
             itemsIndexed(images) { index, image ->
                 AsyncImage(
                     modifier = Modifier
@@ -205,7 +249,9 @@ fun DetailsEditingImages(
                                 pagerState.scrollToPage(index)
                             }
                         },
-                    model = image,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(Uri.parse(image))
+                        .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )
@@ -226,23 +272,27 @@ fun DetailsEditingTags(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Text(
-        style = Typography.bodySmall,
-        text = "Tap tags to remove them"
-    )
-
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        tags?.forEachIndexed { index, tag ->
-            SuggestionChip(
-                onClick = { removeTag(index) },
-                label = {
-                    Text(
-                        text = tag
-                    )
-                }
+    tags?.let {
+        if (tags.isNotEmpty()) {
+            Text(
+                style = Typography.bodySmall,
+                text = "Tap tags to remove them"
             )
+        }
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            tags.forEachIndexed { index, tag ->
+                SuggestionChip(
+                    onClick = { removeTag(index) },
+                    label = {
+                        Text(
+                            text = tag
+                        )
+                    }
+                )
+            }
         }
     }
 
@@ -263,6 +313,32 @@ fun DetailsEditingTags(
         value = newTag,
         onValueChange = { input -> updateNewTag(input) }
     )
+}
+
+@Composable
+fun AddPhotoCard(
+    pickMedia: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
+) {
+    Column(
+        modifier = Modifier
+            .size(width = 70.dp, height = 50.dp)
+            .clip(shape = RoundedCornerShape(4.dp))
+            .background(color = Color.Gray)
+            .clickable {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_camera),
+            contentDescription = null
+        )
+
+        Text(
+            text = "Add photo"
+        )
+    }
 }
 
 @Preview(
@@ -286,7 +362,8 @@ fun DetailsEditingTitlePreview() {
 fun DetailsEditingImagesPreview() {
     Column {
         DetailsEditingImages(
-            images = listOf("image", "another image")
+            images = listOf("image", "another image"),
+            addImage = {}
         )
     }
 }
@@ -327,6 +404,7 @@ fun EntryCardDetailsEditingPreview() {
         updateNewTag = {},
         removeTag = {},
         onAddClick = {},
-        onSaveClick = {}
+        onSaveClick = {},
+        addImage = {}
     )
 }
