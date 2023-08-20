@@ -169,6 +169,22 @@ class DetailsScreenViewModel @Inject constructor(
         }
     }
 
+    fun removeImage(index: Int) {
+        val entry = (_uiState.value as DetailsScreenState.EditingData).entry
+
+        val images = entry.images?.toMutableList()
+
+        images?.removeAt(index)
+
+        _uiState.update {
+            (it as DetailsScreenState.EditingData).copy(
+                entry = entry.copy(
+                    images = images
+                )
+            )
+        }
+    }
+
     fun onSaveClick() {
         val entry = (_uiState.value as DetailsScreenState.EditingData).entry
 

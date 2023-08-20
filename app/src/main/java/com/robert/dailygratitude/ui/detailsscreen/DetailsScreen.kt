@@ -75,7 +75,8 @@ fun DetailsScreen(
                             onFinishCallBack = onBack
                         )
                     },
-                    addImage = { imageUri -> viewModel.addImage(imageUri) }
+                    addImage = { imageUri -> viewModel.addImage(imageUri) },
+                    removeImage = { index -> viewModel.removeImage(index) }
                 )
             }
         }

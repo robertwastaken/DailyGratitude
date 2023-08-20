@@ -25,16 +25,23 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +77,7 @@ fun EntryCardDetailsEditing(
     newTag: String,
     updateNewTag: (String) -> Unit,
     addImage: (Uri) -> Unit,
+    removeImage: (Int) -> Unit,
     removeTag: (Int) -> Unit,
     onSaveClick: (() -> Unit),
     onAddClick: (() -> Unit)
@@ -93,7 +101,8 @@ fun EntryCardDetailsEditing(
             // Images
             DetailsEditingImages(
                 images = model.images,
-                addImage = { imageUri -> addImage(imageUri) }
+                addImage = { imageUri -> addImage(imageUri) },
+                removeImage = { imageUri -> removeImage(imageUri) }
             )
 
             // Tags
@@ -172,11 +181,12 @@ fun DetailsEditingTitle(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun DetailsEditingImages(
     images: List<String>?,
-    addImage: (Uri) -> Unit
+    addImage: (Uri) -> Unit,
+    removeImage: (Int) -> Unit
 ) {
     images?.let {
         val pagerState = rememberPagerState(pageCount = { images.size })
@@ -207,9 +217,8 @@ fun DetailsEditingImages(
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
+
         } else if (images.size > 1) {
-
-
             HorizontalPager(
                 modifier = Modifier.height(250.dp),
                 state = pagerState,
@@ -241,20 +250,42 @@ fun DetailsEditingImages(
             }
 
             itemsIndexed(images) { index, image ->
-                AsyncImage(
+                Box(
                     modifier = Modifier
-                        .width(70.dp)
-                        .clickable {
-                            coroutineScope.launch {
-                                pagerState.scrollToPage(index)
-                            }
-                        },
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(Uri.parse(image))
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+                        .fillMaxWidth()
+                        .height(250.dp)
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .width(70.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(index)
+                                }
+                            },
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(Uri.parse(image))
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+
+                    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                        IconButton(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(color = Color.White),
+                            onClick = { removeImage(index) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = null,
+                                tint = Color.Red
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -363,7 +394,8 @@ fun DetailsEditingImagesPreview() {
     Column {
         DetailsEditingImages(
             images = listOf("image", "another image"),
-            addImage = {}
+            addImage = {},
+            removeImage = {}
         )
     }
 }
@@ -405,6 +437,7 @@ fun EntryCardDetailsEditingPreview() {
         removeTag = {},
         onAddClick = {},
         onSaveClick = {},
-        addImage = {}
+        addImage = {},
+        removeImage = {}
     )
 }
