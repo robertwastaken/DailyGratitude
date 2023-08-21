@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,100 +36,102 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            HomeTopAppBar(
-                onAddClick = onAddClick,
-                showSnackbar = { message -> showSnackbar(message) }
-            )
-        }
-    ) { paddingValues ->
-        when (uiState) {
-            is HomeScreenState.DataLoaded -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    (uiState as HomeScreenState.DataLoaded).let { state ->
-                        if (state.data[HomeScreenViewModel.THIS_WEEK]?.isNotEmpty() == true) {
-                            item {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Gray,
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    text = "This week"
-                                )
+    Surface {
+        Scaffold(
+            topBar = {
+                HomeTopAppBar(
+                    onAddClick = onAddClick,
+                    showSnackbar = { message -> showSnackbar(message) }
+                )
+            }
+        ) { paddingValues ->
+            when (uiState) {
+                is HomeScreenState.DataLoaded -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(horizontal = 16.dp),
+                        contentPadding = PaddingValues(vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        (uiState as HomeScreenState.DataLoaded).let { state ->
+                            if (state.data[HomeScreenViewModel.THIS_WEEK]?.isNotEmpty() == true) {
+                                item {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Start,
+                                        fontWeight = FontWeight.Bold,
+                                        text = "This week"
+                                    )
+                                }
+
+                                items(
+                                    state.data[HomeScreenViewModel.THIS_WEEK] ?: emptyList()
+                                ) { entry ->
+                                    EntryCard(
+                                        model = entry,
+                                        onClick = { onCardClick(entry.id) }
+                                    )
+                                }
                             }
 
-                            items(
-                                state.data[HomeScreenViewModel.THIS_WEEK] ?: emptyList()
-                            ) { entry ->
-                                EntryCard(
-                                    model = entry,
-                                    onClick = { onCardClick(entry.id) }
-                                )
-                            }
-                        }
+                            if (state.data[HomeScreenViewModel.LAST_MONTH]?.isNotEmpty() == true) {
+                                item {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Start,
+                                        fontWeight = FontWeight.Bold,
+                                        text = "Last month"
+                                    )
+                                }
 
-                        if (state.data[HomeScreenViewModel.LAST_MONTH]?.isNotEmpty() == true) {
-                            item {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Gray,
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    text = "Last month"
-                                )
-                            }
-
-                            items(
-                                state.data[HomeScreenViewModel.LAST_MONTH] ?: emptyList()
-                            ) { entry ->
-                                EntryCard(
-                                    model = entry,
-                                    onClick = { onCardClick(entry.id) }
-                                )
-                            }
-                        }
-
-                        if (state.data[HomeScreenViewModel.OLDER]?.isNotEmpty() == true) {
-                            item {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Gray,
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    text = "Older"
-                                )
+                                items(
+                                    state.data[HomeScreenViewModel.LAST_MONTH] ?: emptyList()
+                                ) { entry ->
+                                    EntryCard(
+                                        model = entry,
+                                        onClick = { onCardClick(entry.id) }
+                                    )
+                                }
                             }
 
-                            items(
-                                state.data[HomeScreenViewModel.OLDER] ?: emptyList()
-                            ) { entry ->
-                                EntryCard(
-                                    model = entry,
-                                    onClick = { onCardClick(entry.id) }
-                                )
+                            if (state.data[HomeScreenViewModel.OLDER]?.isNotEmpty() == true) {
+                                item {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Start,
+                                        fontWeight = FontWeight.Bold,
+                                        text = "Older"
+                                    )
+                                }
+
+                                items(
+                                    state.data[HomeScreenViewModel.OLDER] ?: emptyList()
+                                ) { entry ->
+                                    EntryCard(
+                                        model = entry,
+                                        onClick = { onCardClick(entry.id) }
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            HomeScreenState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                HomeScreenState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

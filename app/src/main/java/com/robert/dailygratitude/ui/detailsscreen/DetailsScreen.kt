@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,45 +40,47 @@ fun DetailsScreen(
             )
         }
     ) { paddingValues ->
-        when (uiState) {
-            DetailsScreenState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        Surface {
+            when (uiState) {
+                DetailsScreenState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
 
-            is DetailsScreenState.DataLoaded -> {
-                EntryCardDetails(
-                    modifier = Modifier.padding(paddingValues),
-                    model = (uiState as DetailsScreenState.DataLoaded).entry
-                )
-            }
+                is DetailsScreenState.DataLoaded -> {
+                    EntryCardDetails(
+                        modifier = Modifier.padding(paddingValues),
+                        model = (uiState as DetailsScreenState.DataLoaded).entry
+                    )
+                }
 
-            is DetailsScreenState.EditingData -> {
-                EntryCardDetailsEditing(
-                    modifier = Modifier.padding(paddingValues),
-                    isAddingNewEntry = (uiState as DetailsScreenState.EditingData).isAddingNewEntry,
-                    description = viewModel.description,
-                    updateDescription = { input -> viewModel.updateDescription(input) },
-                    model = (uiState as DetailsScreenState.EditingData).entry,
-                    addTag = { newTag -> viewModel.addTag(newTag) },
-                    newTag = viewModel.newTag,
-                    updateNewTag = { input -> viewModel.updateNewTag(input) },
-                    removeTag = { index -> viewModel.removeTag(index) },
-                    onSaveClick = { viewModel.onSaveClick() },
-                    onAddClick = {
-                        viewModel.onAddClick(
-                            onFinishCallBack = onBack
-                        )
-                    },
-                    addImage = { imageUri -> viewModel.addImage(imageUri) },
-                    removeImage = { index -> viewModel.removeImage(index) }
-                )
+                is DetailsScreenState.EditingData -> {
+                    EntryCardDetailsEditing(
+                        modifier = Modifier.padding(paddingValues),
+                        isAddingNewEntry = (uiState as DetailsScreenState.EditingData).isAddingNewEntry,
+                        description = viewModel.description,
+                        updateDescription = { input -> viewModel.updateDescription(input) },
+                        model = (uiState as DetailsScreenState.EditingData).entry,
+                        addTag = { newTag -> viewModel.addTag(newTag) },
+                        newTag = viewModel.newTag,
+                        updateNewTag = { input -> viewModel.updateNewTag(input) },
+                        removeTag = { index -> viewModel.removeTag(index) },
+                        onSaveClick = { viewModel.onSaveClick() },
+                        onAddClick = {
+                            viewModel.onAddClick(
+                                onFinishCallBack = onBack
+                            )
+                        },
+                        addImage = { imageUri -> viewModel.addImage(imageUri) },
+                        removeImage = { index -> viewModel.removeImage(index) }
+                    )
+                }
             }
         }
     }
